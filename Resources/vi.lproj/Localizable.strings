@@ -1,0 +1,69 @@
+/* Sound Recorder — Tiếng Việt */
+"app.subtitle" = "Ghi âm thanh máy & micro";
+"settings.open" = "Cài đặt";
+"source.label" = "Nguồn";
+"source.system" = "Hệ thống";
+"source.mic" = "Micro";
+"source.both" = "Cả hai";
+"summary.app" = "Chỉ %@";
+"format.short.f32" = "WAV 32-bit float";
+"format.short.24" = "WAV 24-bit";
+"format.short.16" = "WAV 16-bit";
+
+"perm.screen.title" = "Cho phép thu âm thanh";
+"perm.screen.message" = "Bật Sound Recorder trong Quyền riêng tư & Bảo mật → Ghi màn hình & âm thanh hệ thống, rồi mở lại ứng dụng.";
+"perm.mic.title" = "Cho phép dùng micro";
+"perm.mic.message" = "Bật Sound Recorder trong Quyền riêng tư & Bảo mật → Micro.";
+"perm.open" = "Mở Cài đặt";
+"notice.dismiss" = "Đóng";
+
+"error.title" = "Không ghi được";
+"error.appNotRunning" = "“%@” không chạy. Hãy mở ứng dụng đó hoặc chọn Mọi ứng dụng trong Cài đặt.";
+"error.timeout" = "Không bắt đầu ghi được trong 15 giây. Hãy kiểm tra quyền trong Cài đặt hệ thống rồi thử lại.";
+"error.failed" = "%@";
+
+"record.start" = "Ghi";
+"record.stop" = "Dừng";
+"status.ready" = "Sẵn sàng ghi";
+"status.starting" = "Đang bắt đầu…";
+"status.recording" = "Đang ghi";
+"status.saving" = "Đang lưu…";
+"status.saved" = "Đã lưu “%@” (%@)";
+"status.clipped" = "%ld mẫu vượt mức tối đa và đã bị cắt. Dùng 32-bit float để giữ nguyên.";
+"timer.limit" = "Tự dừng sau %@";
+"timer.remaining" = "Còn %@";
+"timer.untilStop" = "Ghi đến khi bạn bấm Dừng";
+"meter.system" = "Mức âm thanh hệ thống";
+"meter.mic" = "Mức âm micro";
+
+"recent.title" = "Bản ghi gần đây";
+"recent.openFolder" = "Mở thư mục";
+"recent.empty" = "Chưa có bản ghi nào";
+"recent.play" = "Phát";
+"recent.reveal" = "Hiện trong Finder";
+"recent.delete" = "Chuyển vào Thùng rác";
+"delete.title" = "Chuyển bản ghi này vào Thùng rác?";
+"delete.message" = "“%@” sẽ được chuyển vào Thùng rác.";
+"delete.confirm" = "Chuyển vào Thùng rác";
+"cancel" = "Huỷ";
+
+"settings.general" = "Chung";
+"settings.language" = "Ngôn ngữ";
+"settings.folder" = "Lưu bản ghi vào";
+"settings.folder.choose" = "Chọn…";
+"settings.recording" = "Ghi âm";
+"settings.format" = "Định dạng";
+"format.f32" = "32-bit float (chất lượng cao nhất)";
+"format.24" = "24-bit PCM";
+"format.16" = "16-bit PCM (nhỏ nhất)";
+"settings.limit" = "Tự động dừng";
+"settings.limit.duration" = "Dừng sau";
+"unit.min" = "phút";
+"unit.sec" = "giây";
+"settings.sources" = "Nguồn âm";
+"settings.refresh" = "Làm mới";
+"settings.app" = "Âm thanh hệ thống từ";
+"settings.app.all" = "Mọi ứng dụng";
+"settings.mic.device" = "Micro";
+"mic.default" = "Micro mặc định của hệ thống";
+"settings.sources.footer" = "Mọi tệp đều là WAV 48 kHz stereo. Sound Recorder không bao giờ ghi âm thanh của chính nó.";

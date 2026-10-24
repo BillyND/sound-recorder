@@ -1,5 +1,6 @@
 // Large circular record / stop button. While recording, a ring pulses outward; it is driven by
-// the 15 Hz recording tick through LivePulse, so nothing animates at display rate.
+// the 15 Hz recording tick through LivePulse, so nothing animates at display rate, and it is not
+// shown at all under Reduce Motion.
 
 import SwiftUI
 
@@ -15,9 +16,8 @@ struct RecordButton: View {
             ZStack {
                 if recording { PulseRing(pulse: pulse) }
                 Circle()
-                    .fill(Theme.brandGradient)
-                    .shadow(color: Theme.brand.opacity(recording ? 0.55 : 0.35), radius: recording ? 18 : 10, y: 4)
-                Circle().strokeBorder(.white.opacity(0.35), lineWidth: 1)
+                    .fill(Theme.accentFill)
+                    .shadow(color: Theme.shadow, radius: 6, y: 2)
                 glyph
             }
             .frame(width: 84, height: 84)
@@ -35,22 +35,25 @@ struct RecordButton: View {
     @ViewBuilder private var glyph: some View {
         switch state {
         case .starting, .stopping:
-            ProgressView().controlSize(.small).tint(.white)
+            ProgressView().controlSize(.small).tint(Theme.onAccent)
         case .recording:
-            RoundedRectangle(cornerRadius: 6, style: .continuous).fill(.white).frame(width: 26, height: 26)
+            RoundedRectangle(cornerRadius: 6, style: .continuous).fill(Theme.onAccent).frame(width: 26, height: 26)
         case .idle:
-            Circle().fill(.white).frame(width: 28, height: 28)
+            Circle().fill(Theme.onAccent).frame(width: 28, height: 28)
         }
     }
 }
 
 private struct PulseRing: View {
     @ObservedObject var pulse: LivePulse
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         let phase = pulse.phase
-        Circle()
-            .stroke(Theme.brand.opacity(0.55 * (1 - phase)), lineWidth: 3)
-            .scaleEffect(1 + 0.32 * phase)
+        if !reduceMotion {
+            Circle()
+                .stroke(Theme.accent.opacity(0.5 * (1 - phase)), lineWidth: 2)
+                .scaleEffect(1 + 0.3 * phase)
+        }
     }
 }

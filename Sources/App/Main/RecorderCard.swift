@@ -15,7 +15,7 @@ struct RecorderCard: View {
             TimerText(clock: model.clock, state: model.state, limit: model.limit, t: t)
             Text(status)
                 .font(.callout)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.textSecondary)
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
                 .frame(minHeight: 34)

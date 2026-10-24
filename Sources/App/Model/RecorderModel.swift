@@ -12,6 +12,9 @@ final class RecorderModel: ObservableObject {
     @Published var language: AppLanguage {
         didSet { defaults.set(language.rawValue, forKey: "language"); t = Strings(language) }
     }
+    @Published var appearance: AppAppearance {
+        didSet { defaults.set(appearance.rawValue, forKey: "appearance"); appearance.apply() }
+    }
     @Published var source: CaptureSource { didSet { defaults.set(source.rawValue, forKey: "source") } }
     @Published var format: SampleFormat { didSet { defaults.set(format.rawValue, forKey: "format") } }
     @Published var limitEnabled: Bool { didSet { defaults.set(limitEnabled, forKey: "limitEnabled") } }
@@ -55,6 +58,7 @@ final class RecorderModel: ObservableObject {
         let language = AppLanguage(rawValue: defaults.string(forKey: "language") ?? "") ?? .en
         self.language = language
         t = Strings(language)
+        appearance = AppAppearance(rawValue: defaults.string(forKey: "appearance") ?? "") ?? .system
         source = CaptureSource(rawValue: defaults.string(forKey: "source") ?? "") ?? .system
         format = SampleFormat(rawValue: defaults.string(forKey: "format") ?? "") ?? .float32
         limitEnabled = defaults.bool(forKey: "limitEnabled")
@@ -192,7 +196,10 @@ final class RecorderModel: ObservableObject {
         // Instant attack, smooth release.
         levels.set(Levels(system: max(Self.meterValue(peaks.system), old.system * 0.75),
                           mic: max(Self.meterValue(peaks.mic), old.mic * 0.75)))
-        pulse.set(elapsed.truncatingRemainder(dividingBy: 1.6) / 1.6)
+        // The pulsing ring is hidden under Reduce Motion; then there is nothing to drive.
+        if !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
+            pulse.set(elapsed.truncatingRemainder(dividingBy: 1.6) / 1.6)
+        }
         if let limit, elapsed >= limit + 0.3 { Task { await stop() } }
     }
 

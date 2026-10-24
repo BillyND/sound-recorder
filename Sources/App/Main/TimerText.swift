@@ -15,7 +15,7 @@ struct TimerText: View {
                 .contentTransition(.identity)
             caption
                 .font(.callout.monospacedDigit())
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.textSecondary)
         }
     }
 

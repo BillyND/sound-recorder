@@ -6,8 +6,8 @@ import SwiftUI
 struct PressScaleStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.94 : 1)
-            .animation(Theme.Motion.press, value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed ? 0.96 : 1)
+            .calmAnimation(Theme.Motion.quick, value: configuration.isPressed)
     }
 }
 

@@ -75,3 +75,8 @@
 "settings.updates.footer" = "Bản cập nhật tải từ GitHub và được xác minh trước khi cài. Không bao giờ làm gián đoạn khi đang ghi âm.";
 "settings.updates.postponed" = "Bản %@ đã sẵn sàng và sẽ được cài khi bạn dừng ghi âm.";
 "update.check" = "Kiểm tra cập nhật…";
+
+"settings.appearance" = "Giao diện";
+"appearance.system" = "Theo hệ thống";
+"appearance.light" = "Sáng";
+"appearance.dark" = "Tối";

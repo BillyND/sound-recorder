@@ -12,9 +12,9 @@ struct DurationField: View {
         let secs = Binding(get: { seconds % 60 }, set: { seconds = max(1, seconds / 60 * 60 + min(59, max(0, $0))) })
         HStack(spacing: 6) {
             number(minutes, range: 0...5999)
-            Text(t("unit.min")).foregroundStyle(.secondary)
+            Text(t("unit.min")).foregroundStyle(Theme.textSecondary)
             number(secs, range: 0...59)
-            Text(t("unit.sec")).foregroundStyle(.secondary)
+            Text(t("unit.sec")).foregroundStyle(Theme.textSecondary)
         }
     }
 

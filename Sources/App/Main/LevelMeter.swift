@@ -28,11 +28,11 @@ struct LevelMeter: View {
         HStack(spacing: 10) {
             Image(systemName: icon)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.textSecondary)
                 .frame(width: 20)
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(Color.primary.opacity(0.08))
+                    Capsule().fill(Theme.meterTrack)
                     Capsule()
                         .fill(Theme.meterGradient)
                         .mask(alignment: .leading) {

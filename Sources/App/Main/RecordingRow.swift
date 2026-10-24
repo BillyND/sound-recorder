@@ -13,12 +13,12 @@ struct RecordingRow: View {
         HStack(spacing: 10) {
             Image(systemName: "waveform")
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(Theme.brand)
+                .foregroundStyle(Theme.accent)
                 .frame(width: 30, height: 30)
-                .background(Theme.brand.opacity(0.14), in: RoundedRectangle(cornerRadius: Theme.Radius.badge, style: .continuous))
+                .background(Theme.accentSoft, in: RoundedRectangle(cornerRadius: Theme.Radius.badge, style: .continuous))
             VStack(alignment: .leading, spacing: 2) {
                 Text(recording.name).font(.callout.weight(.medium)).lineLimit(1).truncationMode(.middle)
-                Text(details).font(.caption.monospacedDigit()).foregroundStyle(.secondary).lineLimit(1)
+                Text(details).font(.caption.monospacedDigit()).foregroundStyle(Theme.textSecondary).lineLimit(1)
             }
             Spacer(minLength: 4)
             if hovering {
@@ -32,9 +32,9 @@ struct RecordingRow: View {
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 5)
-        .background(Color.primary.opacity(hovering ? 0.06 : 0), in: RoundedRectangle(cornerRadius: Theme.Radius.row, style: .continuous))
+        .background(hovering ? Theme.surfaceRaised : Color.clear, in: RoundedRectangle(cornerRadius: Theme.Radius.row, style: .continuous))
         .contentShape(Rectangle())
-        .onHover { inside in withAnimation(Theme.Motion.hover) { hovering = inside } }
+        .onHover { inside in withCalmAnimation(Theme.Motion.quick) { hovering = inside } }
         .onTapGesture(count: 2) { model.open(recording) }
         .contextMenu {
             Button(t("recent.play")) { model.open(recording) }

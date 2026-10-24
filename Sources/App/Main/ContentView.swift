@@ -34,6 +34,7 @@ struct ContentView: View {
         }
         .ignoresSafeArea(edges: .top)  // the header row shares the title bar, clear of the window buttons
         .frame(minWidth: 420, idealWidth: 440, maxWidth: 560, minHeight: 520, idealHeight: 780, maxHeight: .infinity)
+        .foregroundStyle(Theme.textPrimary)
         .background(Backdrop())
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             model.refreshPermissions()

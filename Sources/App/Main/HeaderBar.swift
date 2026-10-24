@@ -12,7 +12,7 @@ struct HeaderBar: View {
                     .font(.system(size: 14, weight: .semibold, design: .rounded))
                 Text(model.t("app.subtitle"))
                     .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Theme.textSecondary)
             }
             Spacer()
             SettingsLink {
@@ -23,7 +23,7 @@ struct HeaderBar: View {
             }
             .buttonStyle(.plain)
             .pointerCursor()
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Theme.textSecondary)
             .help(model.t("settings.open"))
             .accessibilityLabel(model.t("settings.open"))
         }

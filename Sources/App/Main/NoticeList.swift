@@ -23,8 +23,9 @@ struct NoticeList: View {
                              actionTitle: nil, action: {}, dismissLabel: t("notice.dismiss"), onDismiss: { model.dismiss(.problem) })
             }
         }
-        .animation(Theme.Motion.notice, value: model.showsScreenNotice)
-        .animation(Theme.Motion.notice, value: model.showsMicNotice)
+        .calmAnimation(value: model.showsScreenNotice)
+        .calmAnimation(value: model.showsMicNotice)
+        .calmAnimation(value: model.problem)
     }
 
     private var problemMessage: String? {

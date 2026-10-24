@@ -13,7 +13,7 @@ struct SoundRecorderApp: App {
             ContentView()
                 .environmentObject(model)
                 .environment(\.locale, model.language.locale)
-                .tint(.brand)
+                .tint(Theme.accentFill)
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
@@ -29,13 +29,18 @@ struct SoundRecorderApp: App {
                 .environmentObject(model)
                 .environmentObject(updater)
                 .environment(\.locale, model.language.locale)
-                .tint(.brand)
+                .tint(Theme.accentFill)
         }
     }
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var keyMonitor: Any?
+
+    /// The remembered appearance applies before any window appears.
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        MainActor.assumeIsolated { RecorderModel.shared.appearance.apply() }
+    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Holding ⌘R must not start and stop recordings over and over.

@@ -37,7 +37,8 @@ struct SourcesSettingsSection: View {
         } footer: {
             Text(t("settings.sources.footer"))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .lineLimit(2, reservesSpace: true)  // same height in every language
+                .foregroundStyle(Theme.textSecondary)
         }
     }
 }

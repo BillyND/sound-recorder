@@ -16,6 +16,8 @@ struct SettingsView: View {
             UpdateSettingsSection()
         }
         .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+        .background(Theme.background)
         .frame(width: 480)
         .fixedSize(horizontal: false, vertical: true)
         .onAppear { model.refreshDevices() }

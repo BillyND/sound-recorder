@@ -36,6 +36,7 @@ struct RecordingsCard: View {
                 Label(t("recent.openFolder"), systemImage: "folder")
             }
             .buttonStyle(.borderless)
+            .foregroundStyle(Theme.accent)
             .pointerCursor()
             .help(model.outputFolder.path)
         }
@@ -47,7 +48,7 @@ struct RecordingsCard: View {
             Image(systemName: "waveform").font(.system(size: 26, weight: .light))
             Text(t("recent.empty")).font(.callout)
         }
-        .foregroundStyle(.tertiary)
+        .foregroundStyle(Theme.textSecondary)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 

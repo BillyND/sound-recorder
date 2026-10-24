@@ -11,7 +11,7 @@ struct SourceSection: View {
                 .disabled(model.isBusy)
             Text(summary)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.textSecondary)
                 .lineLimit(1)
                 .truncationMode(.middle)
         }
@@ -51,18 +51,18 @@ struct SourcePicker: View {
     private func segment(_ source: CaptureSource) -> some View {
         let selected = selection == source
         return Button {
-            withAnimation(Theme.Motion.select) { selection = source }
+            withCalmAnimation { selection = source }
         } label: {
             Label(t("source.\(source.rawValue)"), systemImage: source.symbol)
                 .font(.callout.weight(.medium))
                 .lineLimit(1)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 8)
-                .foregroundStyle(selected ? Color.white : Color.primary)
+                .foregroundStyle(selected ? Theme.onAccent : Theme.textPrimary)
                 .background {
                     if selected {
                         Capsule()
-                            .fill(Theme.brandGradient)
+                            .fill(Theme.accentFill)
                             .matchedGeometryEffect(id: "selection", in: namespace)
                     }
                 }

@@ -18,7 +18,7 @@ struct UpdateSettingsSection: View {
                 HStack(spacing: 8) {
                     Text(updater.version)
                         .monospacedDigit()
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Theme.textSecondary)
                         .textSelection(.enabled)
                     Button(t("update.check")) { updater.checkForUpdates() }
                         .pointerCursor()
@@ -30,7 +30,8 @@ struct UpdateSettingsSection: View {
         } footer: {
             Text(updater.postponedVersion.map { t("settings.updates.postponed", $0) } ?? t("settings.updates.footer"))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .lineLimit(2, reservesSpace: true)  // same height whatever the message
+                .foregroundStyle(Theme.textSecondary)
         }
     }
 }

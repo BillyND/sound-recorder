@@ -19,7 +19,7 @@ struct NoticeBanner: View {
                 .frame(width: 20)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).font(.callout.weight(.semibold)).lineLimit(1)
-                Text(message).font(.caption).foregroundStyle(.secondary).lineLimit(4)
+                Text(message).font(.caption).foregroundStyle(Theme.textSecondary).lineLimit(4)
                     .fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: 4)
@@ -30,7 +30,7 @@ struct NoticeBanner: View {
                     .pointerCursor()
             }
             IconButton(systemImage: "xmark", label: dismissLabel, size: 10, weight: .bold, frame: 18, action: onDismiss)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.textSecondary)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 9)

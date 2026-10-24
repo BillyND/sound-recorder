@@ -12,12 +12,17 @@ struct GeneralSettingsSection: View {
                 ForEach(AppLanguage.allCases) { Text($0.displayName).tag($0) }
             }
             .pointerCursor()
+            Picker(t("settings.appearance"), selection: $model.appearance) {
+                ForEach(AppAppearance.allCases) { Text(t("appearance.\($0.rawValue)")).tag($0) }
+            }
+            .pickerStyle(.segmented)
+            .pointerCursor()
             LabeledContent(t("settings.folder")) {
                 HStack(spacing: 8) {
                     Text((model.outputFolder.path as NSString).abbreviatingWithTildeInPath)
                         .lineLimit(1)
                         .truncationMode(.middle)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Theme.textSecondary)
                         .help(model.outputFolder.path)
                     Button(t("settings.folder.choose")) { model.chooseFolder() }
                         .pointerCursor()

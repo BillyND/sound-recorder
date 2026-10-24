@@ -75,3 +75,8 @@
 "settings.updates.footer" = "Updates come from GitHub and are verified before they install. They never interrupt a recording.";
 "settings.updates.postponed" = "Version %@ is ready and will install when the recording stops.";
 "update.check" = "Check for Updates…";
+
+"settings.appearance" = "Appearance";
+"appearance.system" = "System";
+"appearance.light" = "Light";
+"appearance.dark" = "Dark";

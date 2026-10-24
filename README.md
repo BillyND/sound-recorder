@@ -2,7 +2,8 @@
 
 A small native macOS app (SwiftUI, macOS 15+, Apple Silicon) that records system audio, a microphone, or
 both mixed, to WAV with ScreenCaptureKit. No virtual audio driver needed. English and Vietnamese UI with an
-in-app switch, automatic updates, and a `sysaudio-record` CLI built on the same capture engine.
+in-app switch, remembered System / Light / Dark appearance, automatic updates, and a `sysaudio-record` CLI
+built on the same capture engine.
 
 | Light | Dark | Settings |
 |---|---|---|
@@ -37,6 +38,26 @@ code signature, so macOS keeps these permissions across versions.
 (default, keeps headroom), 24-bit or 16-bit PCM (samples above full scale are clipped and counted).
 Files go to `~/Music/Sound Recorder/` as `Sound Recorder 2026-10-24 23-30-05.wav`; the folder, format,
 source, microphone, language and an optional "stop after" duration are remembered.
+
+## Appearance
+
+**Settings → General → Appearance** offers **System** (the default), **Light**, and **Dark**.
+The choice applies immediately to every app window and is remembered across launches. System follows
+the Mac's appearance. The interface uses opaque surfaces rather than glass or blurred materials;
+colours and short transition curves live in `Sources/App/Style/Theme.swift`. Reduce Motion disables
+non-essential transitions and the recording pulse. Timers and level meters update independently of
+the rest of the window, and nothing animates while idle.
+
+Local smoke measurements on the same Mac, 15 one-second `ps` samples per condition:
+
+| Build | Idle CPU | Recording CPU | Idle RSS | Recording RSS |
+|---|---:|---:|---:|---:|
+| 1.0.0 | 0.04% | 5.35% | 97.9 MiB | 93.1 MiB |
+| 1.0.1 | 0.05% | 6.63% | 112.7 MiB | 119.2 MiB |
+
+These are short observations, not a controlled benchmark: the new app had exercised theme and Settings
+changes, and other desktop apps were running. They do not establish a performance improvement.
+The 1.0.1 system-recording smoke produced a finalized 40.46-second, 48 kHz stereo Float32 WAV.
 
 ## Updates
 
@@ -94,5 +115,7 @@ Việt (đổi ngôn ngữ ngay trong Cài đặt).
   lần đầu hãy bấm chuột phải → **Mở**, hoặc chạy lệnh `xattr -dr com.apple.quarantine "/Applications/Sound Recorder.app"`.
 - **Quyền:** bật Sound Recorder trong Cài đặt hệ thống → Quyền riêng tư & Bảo mật → **Ghi màn hình & âm
   thanh hệ thống** (cần cho mọi nguồn, kể cả chỉ ghi micro) và **Micro** (khi ghi micro).
+- **Giao diện:** Cài đặt → Chung → Giao diện có **Theo hệ thống**, **Sáng**, **Tối**; đổi ngay và nhớ lựa
+  chọn khi mở lại. Nền đặc, không kính mờ; tôn trọng cài đặt Giảm chuyển động của macOS.
 - **Cập nhật:** ứng dụng tự kiểm tra, tải và cài bản mới từ GitHub; có thể tắt trong Cài đặt → Cập nhật hoặc
   bấm **Kiểm tra cập nhật…**. Bản cập nhật không bao giờ làm gián đoạn khi đang ghi âm.

@@ -67,3 +67,11 @@
 "settings.mic.device" = "Microphone";
 "mic.default" = "System default microphone";
 "settings.sources.footer" = "All files are 48 kHz stereo WAV. Sound Recorder never records its own sounds.";
+
+"settings.updates" = "Updates";
+"settings.updates.autoCheck" = "Automatically check for updates";
+"settings.updates.autoInstall" = "Automatically download and install updates";
+"settings.updates.version" = "Current version";
+"settings.updates.footer" = "Updates come from GitHub and are verified before they install. They never interrupt a recording.";
+"settings.updates.postponed" = "Version %@ is ready and will install when the recording stops.";
+"update.check" = "Check for Updates…";

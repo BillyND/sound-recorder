@@ -67,3 +67,11 @@
 "settings.mic.device" = "Micro";
 "mic.default" = "Micro mặc định của hệ thống";
 "settings.sources.footer" = "Mọi tệp đều là WAV 48 kHz stereo. Sound Recorder không bao giờ ghi âm thanh của chính nó.";
+
+"settings.updates" = "Cập nhật";
+"settings.updates.autoCheck" = "Tự động kiểm tra bản cập nhật";
+"settings.updates.autoInstall" = "Tự động tải về và cài bản cập nhật";
+"settings.updates.version" = "Phiên bản hiện tại";
+"settings.updates.footer" = "Bản cập nhật tải từ GitHub và được xác minh trước khi cài. Không bao giờ làm gián đoạn khi đang ghi âm.";
+"settings.updates.postponed" = "Bản %@ đã sẵn sàng và sẽ được cài khi bạn dừng ghi âm.";
+"update.check" = "Kiểm tra cập nhật…";

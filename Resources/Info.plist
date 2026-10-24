@@ -5,8 +5,7 @@
   <key>CFBundleName</key><string>Sound Recorder</string>
   <key>CFBundleDisplayName</key><string>Sound Recorder</string>
   <key>CFBundleIdentifier</key><string>com.macb.sound-recorder</string>
-  <key>CFBundleVersion</key><string>1.0.0</string>
-  <key>CFBundleShortVersionString</key><string>1.0.0</string>
+  <!-- CFBundleVersion and CFBundleShortVersionString come from the VERSION file at build time -->
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleExecutable</key><string>SoundRecorder</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
@@ -15,6 +14,12 @@
   <key>LSMinimumSystemVersion</key><string>15.0</string>
   <key>LSApplicationCategoryType</key><string>public.app-category.music</string>
   <key>NSHighResolutionCapable</key><true/>
+  <!-- Sparkle: updates come from this repo's GitHub releases, signed with the EdDSA key below
+       (its private half lives only in the maintainer's login keychain, account "sound-recorder") -->
+  <key>SUFeedURL</key><string>https://github.com/BillyND/sound-recorder/releases/latest/download/appcast.xml</string>
+  <key>SUPublicEDKey</key><string>sLu/CMMptI9eaAF553vRmuEegIksHsKCN/BAURYCPJ4=</string>
+  <key>SUEnableAutomaticChecks</key><true/>
+  <key>SUAutomaticallyUpdate</key><true/>
   <key>NSMicrophoneUsageDescription</key><string>Sound Recorder records your microphone when you choose Microphone or Both.</string>
 </dict>
 </plist>

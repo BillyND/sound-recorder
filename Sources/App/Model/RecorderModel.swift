@@ -1,55 +1,8 @@
-// App state: settings (remembered in UserDefaults), the running capture session,
-// permissions and the list of recent recordings.
+// App state: settings (remembered in UserDefaults) and the running capture session.
+// Permissions, apps, devices and the recordings list live in RecorderModel+Library.swift.
 
-import AppKit
 import AVFoundation
-import Combine
 import SwiftUI
-
-enum RecordingState { case idle, starting, recording, stopping }
-
-/// Something the user should know about; rendered in the current language.
-enum Problem: Equatable {
-    case screenPermission, micPermission, startTimedOut
-    case appNotRunning(String)
-    case failed(String)
-}
-
-struct Recording: Identifiable, Equatable {
-    let url: URL
-    let date: Date
-    let seconds: Double
-    let bytes: Int64
-    var id: URL { url }
-    var name: String { url.deletingPathExtension().lastPathComponent }
-}
-
-struct RunningApp: Identifiable, Hashable {
-    let bundleID: String
-    let name: String
-    var id: String { bundleID }
-}
-
-struct MicDevice: Identifiable, Hashable {
-    let id: String  // AVCaptureDevice.uniqueID
-    let name: String
-}
-
-/// Values that change while recording, split by update rate so each redraws only
-/// its own small view: the clock once per second, meters and pulse at 15 Hz.
-final class LiveClock: ObservableObject {
-    @Published var seconds = 0
-}
-
-struct Levels: Equatable {
-    var system: Double = 0  // 0…1 on a -60…0 dBFS scale
-    var mic: Double = 0
-    var pulse: Double = 0   // 0…1 phase of the record button ring
-}
-
-final class LiveLevels: ObservableObject {
-    @Published var value = Levels()
-}
 
 @MainActor
 final class RecorderModel: ObservableObject {
@@ -67,43 +20,28 @@ final class RecorderModel: ObservableObject {
     @Published var micDeviceID: String? { didSet { defaults.set(micDeviceID, forKey: "micDeviceID") } }
     @Published var appBundleID: String?  // nil = all apps; not remembered (apps come and go)
 
-    // State
+    // State. Setters are internal only for RecorderModel+Library.swift; views never write them.
     @Published private(set) var state: RecordingState = .idle
-    @Published private(set) var problem: Problem?
     @Published private(set) var lastSaved: CaptureResult?
-    @Published private(set) var screenPermission = hasScreenCapturePermission()
-    @Published private(set) var micStatus = AVCaptureDevice.authorizationStatus(for: .audio)
-    @Published private(set) var recordings: [Recording] = []
-    @Published private(set) var runningApps: [RunningApp] = []
-    @Published private(set) var micDevices: [MicDevice] = []
-    @Published private var dismissed: Set<NoticeKind> = []
+    @Published var problem: Problem?
+    @Published var screenPermission = hasScreenCapturePermission()
+    @Published var micStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+    @Published var recordings: [Recording] = []
+    @Published var runningApps: [RunningApp] = []
+    @Published var micDevices: [MicDevice] = []
+    @Published var dismissed: Set<NoticeKind> = []
     let clock = LiveClock()
     let levels = LiveLevels()
+    let pulse = LivePulse()
 
     enum NoticeKind { case screen, mic, problem }
-
-    var showsScreenNotice: Bool {
-        problem == .screenPermission || (!screenPermission && !dismissed.contains(.screen))
-    }
-    var showsMicNotice: Bool {
-        let blocked = source.includesMic && (micStatus == .denied || micStatus == .restricted)
-        return problem == .micPermission || (blocked && !dismissed.contains(.mic))
-    }
-
-    func dismiss(_ kind: NoticeKind) {
-        dismissed.insert(kind)
-        switch (kind, problem) {
-        case (.screen, .screenPermission?), (.mic, .micPermission?), (.problem, _): problem = nil
-        default: break
-        }
-    }
 
     private(set) var t: Strings
     var isBusy: Bool { state != .idle }
     var limit: Double? { limitEnabled && limitSeconds > 0 ? Double(limitSeconds) : nil }
 
     private let defaults = UserDefaults.standard
-    private var session: CaptureSession?
+    var session: CaptureSession?
     private var startToken: UUID?
     private var startDate = Date()
     private var ticker: Timer?
@@ -184,7 +122,7 @@ final class RecorderModel: ObservableObject {
                 startToken = nil
                 self.session = session
                 startDate = Date()
-                clock.seconds = 0
+                clock.set(0)
                 state = .recording
                 startTicker()
             } catch {
@@ -204,7 +142,8 @@ final class RecorderModel: ObservableObject {
         ticker = nil
         let result = await session.stop()
         self.session = nil
-        levels.value = Levels()
+        levels.set(Levels())
+        pulse.set(0)
         lastSaved = result
         state = .idle
         reloadRecordings()
@@ -233,10 +172,11 @@ final class RecorderModel: ObservableObject {
         }
     }
 
-    /// 15 Hz UI tick while recording: clock, meters, pulse and the duration limit.
+    /// 15 Hz UI tick while recording: clock, meters, pulse and the duration limit. The timer fires on
+    /// the main run loop, so it updates the live objects directly instead of scheduling a task per tick.
     private func startTicker() {
         let timer = Timer(timeInterval: 1.0 / 15, repeats: true) { _ in
-            Task { @MainActor in RecorderModel.shared.tick() }
+            MainActor.assumeIsolated { RecorderModel.shared.tick() }
         }
         timer.tolerance = 0.02
         RunLoop.main.add(timer, forMode: .common)
@@ -246,14 +186,13 @@ final class RecorderModel: ObservableObject {
     private func tick() {
         guard state == .recording, let session else { return }
         let elapsed = Date().timeIntervalSince(startDate)
-        let seconds = Int(limit.map { min(elapsed, $0) } ?? elapsed)
-        if clock.seconds != seconds { clock.seconds = seconds }
+        clock.set(Int(limit.map { min(elapsed, $0) } ?? elapsed))
         let peaks = session.recorder.takePeaks()
         let old = levels.value
         // Instant attack, smooth release.
-        levels.value = Levels(system: max(Self.meterValue(peaks.system), old.system * 0.75),
-                              mic: max(Self.meterValue(peaks.mic), old.mic * 0.75),
-                              pulse: elapsed.truncatingRemainder(dividingBy: 1.6) / 1.6)
+        levels.set(Levels(system: max(Self.meterValue(peaks.system), old.system * 0.75),
+                          mic: max(Self.meterValue(peaks.mic), old.mic * 0.75)))
+        pulse.set(elapsed.truncatingRemainder(dividingBy: 1.6) / 1.6)
         if let limit, elapsed >= limit + 0.3 { Task { await stop() } }
     }
 
@@ -275,86 +214,5 @@ final class RecorderModel: ObservableObject {
             n += 1
         }
         return url
-    }
-
-    // MARK: Permissions, apps and devices
-
-    func refreshPermissions() {
-        screenPermission = hasScreenCapturePermission()
-        micStatus = AVCaptureDevice.authorizationStatus(for: .audio)
-        if screenPermission, problem == .screenPermission { problem = nil }
-        if micStatus == .authorized, problem == .micPermission { problem = nil }
-    }
-
-    func openPrivacySettings(_ pane: String) {
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(pane)") {
-            NSWorkspace.shared.open(url)
-        }
-    }
-
-    func refreshDevices() {
-        let own = Bundle.main.bundleIdentifier
-        runningApps = NSWorkspace.shared.runningApplications
-            .filter { $0.activationPolicy == .regular && $0.bundleIdentifier != nil && $0.bundleIdentifier != own }
-            .map { RunningApp(bundleID: $0.bundleIdentifier!, name: $0.localizedName ?? $0.bundleIdentifier!) }
-            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
-        micDevices = AVCaptureDevice.DiscoverySession(deviceTypes: [.microphone, .external], mediaType: .audio, position: .unspecified)
-            .devices.map { MicDevice(id: $0.uniqueID, name: $0.localizedName) }
-    }
-
-    func appName(_ bundleID: String) -> String {
-        runningApps.first { $0.bundleID == bundleID }?.name ?? bundleID
-    }
-
-    var micName: String {
-        micDeviceID.flatMap { id in micDevices.first { $0.id == id }?.name } ?? t("mic.default")
-    }
-
-    // MARK: Output folder and recordings
-
-    func chooseFolder() {
-        let panel = NSOpenPanel()
-        panel.canChooseDirectories = true
-        panel.canChooseFiles = false
-        panel.canCreateDirectories = true
-        panel.directoryURL = outputFolder
-        panel.prompt = t("settings.folder.choose")
-        if panel.runModal() == .OK, let url = panel.url { outputFolder = url }
-    }
-
-    func reloadRecordings() {
-        let folder = outputFolder
-        let current = session?.url
-        Task.detached(priority: .utility) {
-            let keys: [URLResourceKey] = [.creationDateKey, .fileSizeKey]
-            let files = (try? FileManager.default.contentsOfDirectory(at: folder, includingPropertiesForKeys: keys, options: .skipsHiddenFiles)) ?? []
-            let list = files
-                .filter { $0.pathExtension.lowercased() == "wav" && $0 != current }
-                .compactMap { url -> Recording? in
-                    let values = try? url.resourceValues(forKeys: Set(keys))
-                    let file = try? AVAudioFile(forReading: url)
-                    let seconds = file.map { Double($0.length) / $0.fileFormat.sampleRate } ?? 0
-                    return Recording(url: url, date: values?.creationDate ?? .distantPast, seconds: seconds, bytes: Int64(values?.fileSize ?? 0))
-                }
-                .sorted { $0.date > $1.date }
-                .prefix(50)
-            await MainActor.run { RecorderModel.shared.recordings = Array(list) }
-        }
-    }
-
-    func open(_ recording: Recording) { NSWorkspace.shared.open(recording.url) }
-    func reveal(_ recording: Recording) { NSWorkspace.shared.activateFileViewerSelecting([recording.url]) }
-    func revealFolder() {
-        try? FileManager.default.createDirectory(at: outputFolder, withIntermediateDirectories: true)
-        NSWorkspace.shared.open(outputFolder)
-    }
-
-    func trash(_ recording: Recording) {
-        do {
-            try FileManager.default.trashItem(at: recording.url, resultingItemURL: nil)
-        } catch {
-            problem = .failed(error.localizedDescription)
-        }
-        reloadRecordings()
     }
 }

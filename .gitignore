@@ -1,2 +1,8 @@
 out/
+.build/
 .DS_Store
+*.zip
+*.p12
+*.pem
+# downloaded by `make sparkle-tools` (Sparkle framework + sign_update / generate_keys)
+packaging/sparkle-tools/

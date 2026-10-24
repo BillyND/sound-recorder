@@ -6,6 +6,7 @@ import SwiftUI
 struct SoundRecorderApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var model = RecorderModel.shared
+    @StateObject private var updater = AppUpdater.shared
 
     var body: some Scene {
         Window("Sound Recorder", id: "main") {
@@ -18,11 +19,15 @@ struct SoundRecorderApp: App {
         .windowResizability(.contentSize)
         .defaultSize(width: 440, height: 800)
         .windowBackgroundDragBehavior(.enabled)
-        .commands { CommandGroup(replacing: .newItem) {} }
+        .commands {
+            CommandGroup(replacing: .newItem) {}
+            CommandGroup(after: .appInfo) { CheckForUpdatesCommand(updater: updater, model: model) }
+        }
 
         Settings {
             SettingsView()
                 .environmentObject(model)
+                .environmentObject(updater)
                 .environment(\.locale, model.language.locale)
                 .tint(.brand)
         }
